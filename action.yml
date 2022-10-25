@@ -23,25 +23,31 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-      shell: bash
 
     - name: Set up remote
+      env:
+        SSH_KEY: ${{ inputs.destinationSSHKey }} # handle whitespace
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
-        ssh-agent -a /tmp/ssh_agent.sock > /dev/null
-        ssh-add - <<< ${{ secrets.destinationSSHKey }}
+        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+        ssh-add - <<< "$SSH_KEY"
         git remote add destinationRemote "git@github.com:${{inputs.destinationRepo}}.git"
-      shell: bash
+      shell: /usr/bin/bash -e {0}
 
     # This approach ensures that we only ever touch branches that are
     # first touched in the source repository (i.e. this will not delete
     # branches created in the destination repository).
 
     - name: Push branch
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
       run: git push --force destinationRemote $(git branch show-current)
       if: github.event_name == 'push'
-      shell: bash
+      shell: /usr/bin/bash -e {0}
 
     - name: Delete branch
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
       run: git push destinationRemote :$(git branch show-current)
       if: github.event_name == 'delete'
-      shell: bash
+      shell: /usr/bin/bash -e {0}
