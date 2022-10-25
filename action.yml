@@ -1,0 +1,47 @@
+name: Mirror Repo (push)
+
+description: Mirror a repository using a push pattern (via SSH)
+
+inputs:
+  destinationRepo:
+    required: true
+    type: string
+    description: |
+      The repo that is being copied TO (e.g. NewOrg/my-repo).
+  destinationSSHKey:
+    required: true
+    type: string
+    description: |
+      Private SSH key with write access to destination repo.
+
+runs:
+
+  using: "composite"
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+      shell: bash
+
+    - name: Set up remote
+      run: |
+        ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+        ssh-add - <<< ${{ secrets.destinationSSHKey }}
+        git remote add destinationRemote "git@github.com:${{inputs.destinationRepo}}.git"
+      shell: bash
+
+    # This approach ensures that we only ever touch branches that are
+    # first touched in the source repository (i.e. this will not delete
+    # branches created in the destination repository).
+
+    - name: Push branch
+      run: git push --force destinationRemote $(git branch show-current)
+      if: github.event_name == 'push'
+      shell: bash
+
+    - name: Delete branch
+      run: git push destinationRemote :$(git branch show-current)
+      if: github.event_name == 'delete'
+      shell: bash
