@@ -26,10 +26,12 @@ runs:
 
   steps:
     - name: echo stuff
+      shell: bash
       run: |
         echo ${{ github.ref }}
         echo ${{ github.event_name }}
         echo ${{ github.ref_type }}
+
     - name: Checkout code
       uses: actions/checkout@v3
       with:
