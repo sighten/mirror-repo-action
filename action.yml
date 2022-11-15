@@ -62,7 +62,7 @@ runs:
       env:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
       run: git push --force destinationRemote ${{ github.ref }}
-      if: ${{ inputs.mirrorTags }} && github.event_name == 'push' && github.ref_type == 'tag'
+      if: inputs.mirrorTags && github.event_name == 'push' && github.ref_type == 'tag'
       shell: bash
 
     - name: Delete branch
