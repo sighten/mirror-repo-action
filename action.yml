@@ -13,7 +13,7 @@ inputs:
     type: string
     description: |
       Private SSH key with write access to destination repo.
-  mirrorTags:
+  mirrorTagsEnabled:
     required: false
     type: boolean
     default: false
@@ -61,7 +61,7 @@ runs:
     - name: Push tag
       env:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
-      if: inputs.mirrorTags && (github.event_name == 'push') && (github.ref_type == 'tag')
+      if: (inputs.mirrorTagsEnabled == true) && (github.event_name == 'push') && (github.ref_type == 'tag')
       run: git push --force destinationRemote ${{ github.ref }}
       shell: bash
 
@@ -75,6 +75,6 @@ runs:
     - name: Delete tag
       env:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
-      if: inputs.mirrorTags && (github.event_name == 'delete') && (github.ref_type == 'tag')
+      if: (inputs.mirrorTagsEnabled == true) && (github.event_name == 'delete') && (github.ref_type == 'tag')
       run: git push destinationRemote --delete ${{ github.ref }}
       shell: bash
