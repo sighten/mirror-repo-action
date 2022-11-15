@@ -25,6 +25,11 @@ runs:
   using: "composite"
 
   steps:
+    - name: echo stuff
+      run: |
+        echo ${{ github.ref }}
+        echo ${{ github.event_name }}
+        echo ${{ github.ref_type }}
     - name: Checkout code
       uses: actions/checkout@v3
       with:
