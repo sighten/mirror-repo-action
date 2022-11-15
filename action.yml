@@ -51,12 +51,12 @@ runs:
       if: github.event_name == 'push' && github.ref_type == 'branch'
       shell: bash
 
-    - name: Push tag
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
-      run: git push --force destinationRemote ${{ github.ref }}
-      if:  ${{ inputs.mirrorTags }} && github.event_name == 'push' && github.ref_type == 'tag'
-      shell: bash
+#    - name: Push tag
+#      env:
+#        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
+#      run: git push --force destinationRemote ${{ github.ref }}
+#      if:  ${{ inputs.mirrorTags }} && github.event_name == 'push' && github.ref_type == 'tag'
+#      shell: bash
 
     - name: Delete branch
       env:
@@ -65,9 +65,9 @@ runs:
       if: github.event_name == 'delete' && github.ref_type == 'branch'
       shell: bash
 
-    - name: Delete tag
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
-      run: git push destinationRemote --delete ${{ github.ref }}
-      if:  ${{ inputs.mirrorTags }} && github.event_name == 'delete' && github.ref_type == 'tag'
-      shell: bash
+#    - name: Delete tag
+#      env:
+#        SSH_AUTH_SOCK: /tmp/ssh_agent.sock # necessary to access to key
+#      run: git push destinationRemote --delete ${{ github.ref }}
+#      if:  ${{ inputs.mirrorTags }} && github.event_name == 'delete' && github.ref_type == 'tag'
+#      shell: bash
