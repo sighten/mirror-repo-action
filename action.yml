@@ -16,9 +16,9 @@ inputs:
   mirrorTagsEnabled:
     required: false
     type: boolean
-    default: false
+    default: true
     description: |
-      control whether tags should be mirrored
+      Set to `true` to also mirror tags
 
 runs:
 
